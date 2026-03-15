@@ -1,0 +1,39 @@
+name: Build Scikit-learn Mastery DOCX
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build-docx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
+      - name: Ensure script is executable
+        run: |
+          chmod +x tools/make_docx.sh
+
+      - name: Build DOCX
+        run: |
+          bash tools/make_docx.sh
+
+      - name: Upload DOCX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Scikit-learn_Mastery_DOCX
+          path: |
+            dist/Scikit-learn_Mastery.docx
+            dist/Scikit-learn_Mastery.build.md
+          if-no-files-found: error
